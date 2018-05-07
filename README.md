@@ -1,6 +1,10 @@
 # Dynet-Biaffine-dependency-parser
 This repository implements the parser described in the paper [Deep Biaffine Attention for Neural Dependency Parsing](https://arxiv.org/abs/1611.01734).
 
+## Requirements
+- Python2.7
+- Dynet
+
 I tried my best to **exactly copy every detail** in the [tensorflow code](https://github.com/tdozat/Parser) (which is the original code from the paper's authors), including the weight initialization, choice of activation fucntion (and dropout), data preprocess, batch operation, MST algorithm, and, of course, hyperparameters.
 
 *For one who is interested, please tell me if you can find a difference.*
