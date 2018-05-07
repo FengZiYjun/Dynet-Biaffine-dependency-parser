@@ -7,6 +7,7 @@ import dynet as dy
 import models
 from lib import Vocab, DataLoader
 from config import Configurable
+from datetime import datetime
 
 def test(parser, vocab, num_buckets_test, test_batch_size, test_file, output_file):
     data_loader = DataLoader(test_file, num_buckets_test, vocab)
@@ -37,11 +38,12 @@ def test(parser, vocab, num_buckets_test, test_batch_size, test_file, output_fil
                 else:
                     fo.write('\n')
 
-    os.system('perl eval.pl -q -b -g %s -s %s -o tmp' % (test_file, output_file))
-    os.system('tail -n 3 tmp > score_tmp')
-    LAS, UAS = [float(line.strip().split()[-2]) for line in open('score_tmp').readlines()[:2]]
+    timestemp = str(datetime.now()).replace(" ", "_")
+    os.system(("perl eval.pl -q -b -g %s -s %s -o tmp"+timestemp) % (test_file, output_file))
+    os.system("tail -n 3 tmp" + timestemp + " > score_tmp" + timestemp)
+    LAS, UAS = [float(line.strip().split()[-2]) for line in open('score_tmp' + timestemp).readlines()[:2]]
     print 'LAS %.2f, UAS %.2f'%(LAS, UAS)
-    os.system('rm tmp score_tmp')
+    os.system("rm tmp" + timestemp + " score_tmp" + timestemp)
     return LAS, UAS
 
 

@@ -11,7 +11,8 @@ from config import Configurable
 
 import argparse
 if __name__ == "__main__":
-	np.random.seed(666)
+        # change 1 line
+	np.random.seed(np.random.randint(0, 1000))
 	argparser = argparse.ArgumentParser()
 	argparser.add_argument('--config_file', default='../configs/default.cfg')
 	argparser.add_argument('--model', default='BaseParser')
@@ -19,7 +20,7 @@ if __name__ == "__main__":
 	config = Configurable(args.config_file, extra_args)
 	Parser = getattr(models, args.model)
 
-	vocab = Vocab(config.train_file, config.pretrained_embeddings_file, config.min_occur_count)
+	vocab = Vocab(config.train_file, None, config.min_occur_count)
 	cPickle.dump(vocab, open(config.save_vocab_path, 'w'))
 	parser = Parser(vocab, config.word_dims, config.tag_dims,config.dropout_emb, config.lstm_layers, config.lstm_hiddens, config.dropout_lstm_input, config.dropout_lstm_hidden, config.mlp_arc_size, config.mlp_rel_size, config.dropout_mlp)
 	data_loader = DataLoader(config.train_file, config.num_buckets_train, vocab)

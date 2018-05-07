@@ -22,7 +22,8 @@ class BaseParser(object):
 
 		self._vocab = vocab
 		self.word_embs = pc.lookup_parameters_from_numpy(vocab.get_word_embs(word_dims))
-		self.pret_word_embs = pc.lookup_parameters_from_numpy(vocab.get_pret_embs())
+		# remove 1 line
+                #self.pret_word_embs = pc.lookup_parameters_from_numpy(vocab.get_pret_embs())
 		self.tag_embs = pc.lookup_parameters_from_numpy(vocab.get_tag_embs(tag_dims))
 		
 		self.LSTM_builders = []
@@ -84,8 +85,10 @@ class BaseParser(object):
 			mask_1D = dynet_flatten_numpy(mask)
 			mask_1D_tensor = dy.inputTensor(mask_1D, batched = True)
 		
-		word_embs = [dy.lookup_batch(self.word_embs, np.where( w<self._vocab.words_in_train, w, self._vocab.UNK)) + dy.lookup_batch(self.pret_word_embs, w, update = False) for w in word_inputs]
-		tag_embs = [dy.lookup_batch(self.tag_embs, pos) for pos in tag_inputs]
+		word_embs = [dy.lookup_batch(self.word_embs, np.where( w<self._vocab.words_in_train, w, self._vocab.UNK), update=False) 
+                        #+ dy.lookup_batch(self.pret_word_embs, w, update = False) # remove 1 line 
+                        for w in word_inputs]
+		tag_embs = [dy.lookup_batch(self.tag_embs, pos, update=False) for pos in tag_inputs]
 		
 		if isTrain:
 			emb_masks = self.generate_emb_mask(seq_len, batch_size)

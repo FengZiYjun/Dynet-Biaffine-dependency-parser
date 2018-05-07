@@ -15,8 +15,10 @@ class Vocab(object):
 		with open(input_file) as f:
 			for line in f.readlines():
 				info = line.strip().split()
-				if info:
-					assert(len(info)==10), 'Illegal line: %s'%line
+                                if info:
+                                        if info[0] == "#":
+                                            continue
+                                        assert(len(info)==10), 'Illegal line: %s'%line
 					word, tag, head, rel = info[1].lower(), info[3], int(info[6]), info[7]
 					word_counter[word] += 1
 					tag_set.add(tag)
@@ -33,7 +35,9 @@ class Vocab(object):
 		self._pret_file = pret_file
 		if pret_file:
 			self._add_pret_words(pret_file)
-		self._id2tag += list(tag_set)
+		# add 1 line
+                self._words_in_train_data = len(self._id2word)
+                self._id2tag += list(tag_set)
 		self._id2rel += list(rel_set)
 
 		reverse = lambda x : dict(zip(x, range(len(x))))
@@ -73,7 +77,7 @@ class Vocab(object):
 
 
 	def get_word_embs(self, word_dims):
-		if self._pret_file is not None:
+		if self._pret_file is None: # delete not
 			return np.random.randn(self.words_in_train, word_dims).astype(np.float32)
 		return np.zeros((self.words_in_train, word_dims), dtype=np.float32)
 
@@ -129,7 +133,9 @@ class DataLoader(object):
 			for line in f.readlines():
 				info = line.strip().split()
 				if info:
-					assert(len(info)==10), 'Illegal line: %s'%line
+                                        if info[0] == "#":
+                                            continue
+                                        assert(len(info)==10), 'Illegal line: %s'%line
 					word, tag, head, rel = vocab.word2id(info[1].lower()), vocab.tag2id(info[3]), int(info[6]), vocab.rel2id(info[7])
 					sent.append([word, tag, head, rel])
 				else:
@@ -139,8 +145,10 @@ class DataLoader(object):
 		len_counter = Counter()
 		for sent in sents:
 			len_counter[len(sent)] += 1	
-		self._bucket_sizes = KMeans(n_bkts, len_counter).splits
-		self._buckets = [[] for i in xrange(n_bkts)]
+		print("start k-Mean bucketing")
+                self._bucket_sizes = KMeans(n_bkts, len_counter).splits
+		print("k-Mean finish")
+                self._buckets = [[] for i in xrange(n_bkts)]
 		len2bkt = {}
 		prev_size = -1
 		for bkt_idx, size in enumerate(self._bucket_sizes):
