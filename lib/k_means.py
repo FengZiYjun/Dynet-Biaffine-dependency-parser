@@ -54,7 +54,11 @@ class KMeans(object):
     i = len(self._splits)-1
     while i > 0:
       while self._splits[i-1] >= self._splits[i] or self._splits[i-1] not in self._len_cntr:
+      #while self._splits[i-1] >= self._splits[i]:
         self._splits[i-1] -= 1
+        # add 2 lines
+        if self._splits[i-1] == 1:
+            break
         #print(self._splits)
       i -= 1
     
@@ -188,8 +192,10 @@ if __name__ == '__main__':
      31: 4, 32: 4, 33: 4, 35: 3, 38: 3, 1: 2, 45: 2, 49: 2, 37: 1, 39: 1, 40: 1, 41: 1, 43: 1, 44: 1, 46: 1, 48: 1,
      53: 1, 55: 1, 58: 1, 60: 1})
   k = 40
-  kmeans = KMeans(k, cnt)
-  print ("finish")
+  cnt2 = Counter({8: 88, 9: 85, 10: 67, 7: 61, 13: 59, 14: 59, 12: 56, 16: 53, 11: 52, 15: 52, 5: 40, 6: 39, 18: 37, 17: 34, 19: 300})
+  cnt1 = Counter({1: 10, 2: 4, 3: 5, 4: 4, 5:50, 6:60, 7:70})
+  kmeans = KMeans(40, cnt).splits
+  print (kmeans)
 
 # i == 13, A[i-1] -=1 leads to neg infinite
  # [5, 5, 6, 7, 7, 8, 8, 8, 8, 9, 9, 9, -31337514, 1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 23, 24, 25, 27, 30, 35, 60]
